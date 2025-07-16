@@ -5,13 +5,12 @@ import os
 import sqlite3
 
 class DataLoader:
-
     @staticmethod
     def load_data(file_path):
         ext = os.path.splitext(file_path)[-1].lower()
 
         if ext == ".csv":
-            df = pd.read_csv(file_path)
+            df = pd.read_csv(file_path, index_col=False)
         elif ext == ".json":
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -23,13 +22,13 @@ class DataLoader:
         else:
             raise ValueError(f"Unsupported file extension: {ext}")
 
-        if "review" not in df.columns:
-            raise ValueError("Input file must contain a 'review' column")
+        if "content" not in df.columns:
+            raise ValueError("Input file must contain a 'content' column")
 
-        return df, df["review"].astype(str).tolist()
+        return df, df["content"].astype(str).tolist()
 
     @staticmethod
-    def load_data_from_db(db_path, table_name, review_column="review"):
+    def load_data_from_db(db_path, table_name, review_column="content"):
         if not os.path.exists(db_path):
             raise FileNotFoundError(f"Database not found at {db_path}")
 

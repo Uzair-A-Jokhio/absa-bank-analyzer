@@ -1,2 +1,9 @@
 pandas 
 pyabsa
+seqeval
+supabase
+beautifulsoup4
+transformers
+googletrans
+google-play-scraper
+python-dotenv

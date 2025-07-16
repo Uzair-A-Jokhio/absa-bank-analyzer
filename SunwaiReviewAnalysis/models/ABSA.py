@@ -1,4 +1,3 @@
-# absa_quad_extractor/extractor.py
 from pyabsa import ABSAInstruction
 
 class QuadrupleExtractor:

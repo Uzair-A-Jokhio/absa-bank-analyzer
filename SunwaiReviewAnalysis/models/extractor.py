@@ -1,9 +1,11 @@
 # absa_quad_extractor/processor.py
+import logging
 
 def extract_quadruples(reviews, extractor):
     all_aspects, all_opinions, all_sentiments, all_categories = [], [], [], []
 
-    for review in reviews:
+    total = len(reviews)
+    for idx, review in enumerate(reviews, 1):
         try:
             result = extractor.predict(review)
             quads = result.get("Quadruples", [])
@@ -12,7 +14,7 @@ def extract_quadruples(reviews, extractor):
             sentiments = [q["polarity"] for q in quads]
             categories = [q["category"] for q in quads]
         except Exception as e:
-            print(f"Error: {e} for review: {review[:50]}...")
+            logging.error(f"❌ Error: {e} for review: {review[:50]}...")
             aspects, opinions, sentiments, categories = [], [], [], []
 
         all_aspects.append(aspects)
@@ -20,4 +22,7 @@ def extract_quadruples(reviews, extractor):
         all_sentiments.append(sentiments)
         all_categories.append(categories)
 
+        logging.info(f"✅ Extracted {idx}/{total} reviews")
+
     return all_aspects, all_opinions, all_sentiments, all_categories
+
