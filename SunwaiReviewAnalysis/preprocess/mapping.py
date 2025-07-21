@@ -72,7 +72,6 @@ bank_category_map = {
     "CHARTER#GENERAL": "FEES_POLICY_COMPLAINTS",
 }
 
-
 def map_categories(raw_category_list):
     return [bank_category_map.get(cat.strip(), "Miscellaneous") for cat in raw_category_list]
 
@@ -83,7 +82,11 @@ def parse_and_map(df):
 
 def group_reviews_by_app_category_sentiment(df):
     logging.info("📊 Grouping reviews by app, category, and sentiment...")
-    grouped_reviews = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+    grouped_data = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: {
+        "reviews": [],
+        "aspects": [],
+        "opinions": []
+    })))
 
     for _, row in df.iterrows():
         app = str(row.get("app", "")).strip()
@@ -94,24 +97,72 @@ def group_reviews_by_app_category_sentiment(df):
         try:
             categories = ast.literal_eval(str(row.get("mapped_categories", [])))
             sentiments = ast.literal_eval(str(row.get("sentiments", [])))
+            aspects = ast.literal_eval(str(row.get("aspects", [])))
+            opinions = ast.literal_eval(str(row.get("opinions", [])))
         except Exception as e:
             logging.warning(f"Skipping row due to eval error: {e}")
             continue
 
-        for cat, sent in zip(categories, sentiments):
-            grouped_reviews[app][cat][sent].append(content)
+        for i in range(min(len(categories), len(sentiments))):
+            cat = categories[i]
+            sent = sentiments[i]
+            asp = aspects[i] if i < len(aspects) else "NULL"
+            opn = opinions[i] if i < len(opinions) else "NULL"
+
+            grouped_entry = grouped_data[app][cat][sent]
+            grouped_entry["reviews"].append(content)
+            grouped_entry["aspects"].append(asp)
+            grouped_entry["opinions"].append(opn)
 
     records = []
-    for app, cat_dict in grouped_reviews.items():
+    for app, cat_dict in grouped_data.items():
         for cat, sent_dict in cat_dict.items():
-            for sentiment, reviews in sent_dict.items():
+            for sentiment, data in sent_dict.items():
                 records.append({
                     "app": app,
                     "category": cat,
                     "sentiment": sentiment,
-                    "reviews": reviews
+                    "reviews": data["reviews"],
+                    "aspects": data["aspects"],
+                    "opinions": data["opinions"]
                 })
 
     grouped_df = pd.DataFrame(records)
     logging.info("✅ Grouped DataFrame created.")
     return grouped_df
+
+
+# def group_reviews_by_app_category_sentiment(df):
+#     logging.info("📊 Grouping reviews by app, category, and sentiment...")
+#     grouped_reviews = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+
+#     for _, row in df.iterrows():
+#         app = str(row.get("app", "")).strip()
+#         content = str(row.get("content", "")).strip()
+#         if len(content.split()) <= 1:
+#             continue
+
+#         try:
+#             categories = ast.literal_eval(str(row.get("mapped_categories", [])))
+#             sentiments = ast.literal_eval(str(row.get("sentiments", [])))
+#         except Exception as e:
+#             logging.warning(f"Skipping row due to eval error: {e}")
+#             continue
+
+#         for cat, sent in zip(categories, sentiments):
+#             grouped_reviews[app][cat][sent].append(content)
+
+#     records = []
+#     for app, cat_dict in grouped_reviews.items():
+#         for cat, sent_dict in cat_dict.items():
+#             for sentiment, reviews in sent_dict.items():
+#                 records.append({
+#                     "app": app,
+#                     "category": cat,
+#                     "sentiment": sentiment,
+#                     "reviews": reviews
+#                 })
+
+#     grouped_df = pd.DataFrame(records)
+#     logging.info("✅ Grouped DataFrame created.")
+#     return grouped_df

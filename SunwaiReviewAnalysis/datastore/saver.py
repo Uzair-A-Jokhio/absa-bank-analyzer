@@ -2,6 +2,7 @@ from .. import config
 from supabase import create_client, Client
 import os
 from dotenv import load_dotenv
+import logging 
 
 def save_to_csv(df, output_path):
     df.to_csv(output_path, index=False)
@@ -30,3 +31,14 @@ def upload_to_supabase(df, table_name: str):
         except Exception as e:
             print(f"❌ Failed to insert record: {record}")
             print(e)
+
+def get_existing_reviews(table_name="reviews"):
+    try:
+        logging.info("📥 Fetching existing reviews from Supabase...")
+        response = supabase.table("reviews").select("content,app").execute()
+        existing = response.data if response.data else []
+        logging.info(f"📊 Fetched {len(existing)} existing reviews from Supabase.")
+        return existing
+    except Exception as e:
+        print("❌ Failed to fetch existing reviews and apps:", e)
+        return set()

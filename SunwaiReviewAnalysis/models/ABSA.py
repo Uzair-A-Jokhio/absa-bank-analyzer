@@ -1,5 +1,4 @@
 from pyabsa import ABSAInstruction
-
 class QuadrupleExtractor:
     def __init__(self, model_name="multilingual"):
         self.extractor = ABSAInstruction.ABSAGenerator(model_name)

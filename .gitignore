@@ -1,3 +1,8 @@
+checkpoints
+Aspect Term Extraction and Polarity Classification.FAST_LCF_ATEPC.result.json
+checkpoints.json 
+data/
+BankAppDataCollection/
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -171,7 +176,4 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
-
-checkpoints
-Aspect Term Extraction and Polarity Classification.FAST_LCF_ATEPC.result.json
-checkpoints.json  
+ 
