@@ -1,3 +1,3 @@
-from SunwaiReviewAnalysis.pipeline import PipelineRunner
+from SunwaiReviewAnalysis.run_pipeline import PipelineRunner
 pipeline = PipelineRunner()
 pipeline.run()

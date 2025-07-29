@@ -7,7 +7,7 @@ import os
 # List of app package names
 app_package_names = [
         
-    "app.com.brd" # al habib 
+    "com.ofss.digx.mobile.obdx.bahl"  
 ]
 
 # Directory to save results
