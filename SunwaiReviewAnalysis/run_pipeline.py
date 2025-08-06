@@ -119,7 +119,7 @@ class PipelineRunner:
         summary_df = generate_summaries(group_df)
         if summary_df.columns[0].lower() in ["unnamed: 0", "index", ""]:
              summary_df = summary_df.drop(summary_df.columns[0], axis=1)
-        summary_df.to_csv("summary_all.csv", index=False)
+        summary_df.to_csv("result/summary_all.csv", index=False)
         logging.info("🚀 Uploading summaries to Supabase...")
         save_summary_to_supabase(summary_df)
         
